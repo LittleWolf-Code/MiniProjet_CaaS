@@ -47,6 +47,16 @@ C'est une application de **sondage en temps réel** : l'utilisateur vote pour **
 │                           └──────────────────────────────┘                  │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+> 📸 **CAPTURE :** vote
+>
+> ![vote](image/vote.png)
+
+> 📸 **CAPTURE :** result
+>
+> ![result](image/result.png)
+
+
+...
 
 **Flux de données :**
 ```
@@ -127,7 +137,7 @@ docker ps
 
 > 📸 **CAPTURE :** Versions de tous les outils affichées
 >
-> ![Outils](image/capture_outils.png)
+> ![Outils](image/capture_1.png)
 
 ---
 
@@ -149,7 +159,7 @@ ls -la
 
 > 📸 **CAPTURE :** Repository cloné + `ls -la`
 >
-> ![Structure](image/capture_structure_projet.png)
+> ![Structure](image/capture_2.png)
 
 ---
 
@@ -168,7 +178,7 @@ kubectl get nodes
 
 > 📸 **CAPTURE :** Minikube démarré + `kubectl get nodes`
 >
-> ![Minikube](image/capture_minikube_start.png)
+> ![Minikube](image/capture_3.png)
 
 ---
 
@@ -204,11 +214,11 @@ docker push $DOCKERHUB_USER/worker:latest
 
 > 📸 **CAPTURE :** `docker images` montrant les 3 images
 >
-> ![Docker Images](image/capture_docker_images.png)
+> ![Docker Images](image/capture_4.png)
 
 > 📸 **CAPTURE :** Push réussi vers Docker Hub
 >
-> ![Docker Push](image/capture_docker_push.png)
+> ![Docker Push](image/capture_5.png)
 
 ---
 
@@ -251,21 +261,10 @@ minikube service result --url
 
 **Tester :** Voter pour Cats ou Dogs → vérifier les résultats en temps réel.
 
-> 📸 **CAPTURE :** `kubectl get pods` — tous Running
->
-> ![Pods](image/capture_kubectl_pods.png)
+> 📸 **CAPTURE :** `kubectl` — tous Running
 
-> 📸 **CAPTURE :** `kubectl get svc` + `kubectl get deploy`
->
-> ![Services](image/capture_kubectl_services.png)
+> ![Pods](image/capture_6_.png)
 
-> 📸 **CAPTURE :** Interface de vote
->
-> ![Vote](image/capture_vote_app.png)
-
-> 📸 **CAPTURE :** Résultats en temps réel
->
-> ![Result](image/capture_result_app.png)
 
 ---
 
@@ -309,7 +308,7 @@ Ouvrir Jenkins dans le navigateur : **http://localhost:8080**
 
 > 📸 **CAPTURE :** Jenkins dashboard après installation
 >
-> ![Jenkins](image/capture_jenkins_dashboard.png)
+> ![Jenkins](image/capture_7.png)
 
 ---
 
@@ -331,7 +330,7 @@ Ouvrir Jenkins dans le navigateur : **http://localhost:8080**
 
 > 📸 **CAPTURE :** Credentials Docker Hub configurés
 >
-> ![Credentials](image/capture_jenkins_credentials.png)
+> ![Credentials](image/capture_8.png)
 
 ---
 
@@ -388,13 +387,10 @@ docker exec jenkins-blueocean kubectl get nodes
    - ✅ Push to Docker Hub
    - ✅ Deploy to Kubernetes
 
-> 📸 **CAPTURE :** Pipeline Jenkins — 4 stages réussis (Stage View)
->
-> ![Pipeline](image/capture_jenkins_pipeline.png)
 
 > 📸 **CAPTURE :** Console Output — SUCCESS
 >
-> ![Console](image/capture_jenkins_console.png)
+> ![Console](image/capture_9.png)
 
 ---
 
@@ -459,7 +455,7 @@ Dashboards recommandés :
 
 > 📸 **CAPTURE :** Dashboard Grafana avec métriques CPU/mémoire
 >
-> ![Grafana](image/capture_grafana_dashboard.png)
+> ![Grafana](image/capture_10.png)
 
 ### Accéder à Prometheus (optionnel)
 
@@ -481,7 +477,7 @@ sum(container_memory_usage_bytes{namespace="default"}) by (pod)
 
 > 📸 **CAPTURE :** Prometheus avec requête exécutée
 >
-> ![Prometheus](image/capture_prometheus.png)
+> ![Prometheus](image/capture_11.png)
 
 ---
 
