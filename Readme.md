@@ -121,4 +121,4 @@ helm version
 systemctl status jenkins
 ```
 
-![Screenshot](images/capture1.png)
+![Screenshot](image/capture1.png)
