@@ -27,7 +27,7 @@ services:
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client:ro
-      - ~/.kube:/home/jenkins/.kube:ro
+      - ~/.kube:/home/jenkins/.kube
     environment:
       - DOCKER_HOST=tcp://docker:2376
       - DOCKER_CERT_PATH=/certs/client

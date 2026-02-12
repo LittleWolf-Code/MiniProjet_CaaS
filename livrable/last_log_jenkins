@@ -1,0 +1,430 @@
+Started by user admin
+
+Obtained Jenkinsfile from git https://github.com/LittleWolf-Code/MiniProjet_CaaS.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins
+ in /var/jenkins_home/workspace/MiniProjet-CaaS
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/MiniProjet-CaaS/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/LittleWolf-Code/MiniProjet_CaaS.git # timeout=10
+Fetching upstream changes from https://github.com/LittleWolf-Code/MiniProjet_CaaS.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/LittleWolf-Code/MiniProjet_CaaS.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/projet-final^{commit} # timeout=10
+Checking out Revision f51edc5b24fda0cae319e009a53795107335ab06 (refs/remotes/origin/projet-final)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f51edc5b24fda0cae319e009a53795107335ab06 # timeout=10
+Commit message: "docs: rewrite README as complete step-by-step command guide for Ubuntu VM"
+ > git rev-list --no-walk f51edc5b24fda0cae319e009a53795107335ab06 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] echo
+📥 Récupération du code source...
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/MiniProjet-CaaS/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/LittleWolf-Code/MiniProjet_CaaS.git # timeout=10
+Fetching upstream changes from https://github.com/LittleWolf-Code/MiniProjet_CaaS.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/LittleWolf-Code/MiniProjet_CaaS.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/projet-final^{commit} # timeout=10
+Checking out Revision f51edc5b24fda0cae319e009a53795107335ab06 (refs/remotes/origin/projet-final)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f51edc5b24fda0cae319e009a53795107335ab06 # timeout=10
+Commit message: "docs: rewrite README as complete step-by-step command guide for Ubuntu VM"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Images)
+[Pipeline] echo
+🔨 Construction des images Docker...
+[Pipeline] sh
++ docker build -t litlewolf/vote:2 -t litlewolf/vote:latest ./vote
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.08kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11-slim
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [base 1/5] FROM docker.io/library/python:3.11-slim@sha256:0b23cfb7425d065008b778022a17b1551c82f8b4866ee5a7a200084b7e2eafbf
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 274B done
+#5 DONE 0.0s
+
+#6 [base 5/5] RUN pip install --no-cache-dir -r requirements.txt
+#6 CACHED
+
+#7 [base 2/5] RUN apt-get update &&     apt-get install -y --no-install-recommends curl &&     rm -rf /var/lib/apt/lists/*
+#7 CACHED
+
+#8 [base 3/5] WORKDIR /usr/local/app
+#8 CACHED
+
+#9 [base 4/5] COPY requirements.txt ./requirements.txt
+#9 CACHED
+
+#10 [final 1/1] COPY . .
+#10 CACHED
+
+#11 exporting to image
+#11 exporting layers done
+#11 writing image sha256:d1a428d8ed6638d46355b09d6da3d2d741af02bc391944426db42d4825bee096 done
+#11 naming to docker.io/litlewolf/vote:2 done
+#11 naming to docker.io/litlewolf/vote:latest done
+#11 DONE 0.0s
+[Pipeline] sh
++ docker build -t litlewolf/result:2 -t litlewolf/result:latest ./result
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 525B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-slim
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 54B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/node:18-slim@sha256:f9ab18e354e6855ae56ef2b290dd225c1e51a564f87584b9bd21dd651838830e
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 593B done
+#5 DONE 0.0s
+
+#6 [3/7] WORKDIR /usr/local/app
+#6 CACHED
+
+#7 [4/7] RUN npm install -g nodemon
+#7 CACHED
+
+#8 [5/7] COPY package*.json ./
+#8 CACHED
+
+#9 [2/7] RUN apt-get update &&     apt-get install -y --no-install-recommends curl tini &&     rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [6/7] RUN npm ci &&  npm cache clean --force &&  mv /usr/local/app/node_modules /node_modules
+#10 CACHED
+
+#11 [7/7] COPY . .
+#11 CACHED
+
+#12 exporting to image
+#12 exporting layers done
+#12 writing image sha256:b956e26c0d7ceb92bdfc693351569fb96a171f50c459e83a588d73c1f1723a68 done
+#12 naming to docker.io/litlewolf/result:2 done
+#12 naming to docker.io/litlewolf/result:latest done
+#12 DONE 0.0s
+[Pipeline] sh
++ docker build -t litlewolf/worker:2 -t litlewolf/worker:latest ./worker
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.10kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for mcr.microsoft.com/dotnet/runtime:7.0
+#2 DONE 0.1s
+
+#3 [internal] load metadata for mcr.microsoft.com/dotnet/sdk:7.0
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [build 1/7] FROM mcr.microsoft.com/dotnet/sdk:7.0@sha256:d32bd65cf5843f413e81f5d917057c82da99737cb1637e905a1a4bc2e7ec6c8d
+#5 DONE 0.0s
+
+#6 [stage-1 1/3] FROM mcr.microsoft.com/dotnet/runtime:7.0@sha256:8cd26108e7a329458e5b84342816ae39b2b38bd041cfdc0b79b8cf1c0e0d376f
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 95B done
+#7 DONE 0.0s
+
+#8 [build 2/7] RUN echo "I am running on linux/amd64, building for linux/amd64"
+#8 CACHED
+
+#9 [stage-1 2/3] WORKDIR /app
+#9 CACHED
+
+#10 [build 4/7] COPY *.csproj .
+#10 CACHED
+
+#11 [build 5/7] RUN dotnet restore -a amd64
+#11 CACHED
+
+#12 [build 6/7] COPY . .
+#12 CACHED
+
+#13 [build 7/7] RUN dotnet publish -c release -o /app -a amd64 --self-contained false --no-restore
+#13 CACHED
+
+#14 [build 3/7] WORKDIR /source
+#14 CACHED
+
+#15 [stage-1 3/3] COPY --from=build /app .
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers done
+#16 writing image sha256:ec3a945a8029b85f5d421c87cbaceea5d46f3044b6e16fc36b10f1f10a6fe234 done
+#16 naming to docker.io/litlewolf/worker:2 done
+#16 naming to docker.io/litlewolf/worker:latest done
+#16 DONE 0.0s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+[Pipeline] echo
+📤 Push des images vers Docker Hub...
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKER_PASS
+[Pipeline] {
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [DOCKER_PASS]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ echo ****
++ docker login -u litlewolf --password-stdin
+
+WARNING! Your credentials are stored unencrypted in '/var/jenkins_home/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+[Pipeline] sh
++ docker push litlewolf/vote:2
+The push refers to repository [docker.io/litlewolf/vote]
+9df764504ba1: Preparing
+60d9cfb24d70: Preparing
+b41b7d979a6d: Preparing
+566709b1aa6d: Preparing
+cffb6aedaf32: Preparing
+b69aea4cac7d: Preparing
+40b88e8d19a2: Preparing
+dfd9efb4ec4c: Preparing
+a8ff6f8cbdfd: Preparing
+40b88e8d19a2: Waiting
+dfd9efb4ec4c: Waiting
+b69aea4cac7d: Waiting
+a8ff6f8cbdfd: Waiting
+b41b7d979a6d: Pushed
+566709b1aa6d: Pushed
+9df764504ba1: Pushed
+b69aea4cac7d: Layer already exists
+40b88e8d19a2: Layer already exists
+dfd9efb4ec4c: Layer already exists
+a8ff6f8cbdfd: Layer already exists
+cffb6aedaf32: Pushed
+60d9cfb24d70: Pushed
+2: digest: sha256:f9826bf5305db33e1a6bd25325dedcc6c7f793ee399206096a8c748690793c84 size: 2203
+[Pipeline] sh
++ docker push litlewolf/vote:latest
+The push refers to repository [docker.io/litlewolf/vote]
+9df764504ba1: Preparing
+60d9cfb24d70: Preparing
+b41b7d979a6d: Preparing
+566709b1aa6d: Preparing
+cffb6aedaf32: Preparing
+b69aea4cac7d: Preparing
+40b88e8d19a2: Preparing
+dfd9efb4ec4c: Preparing
+a8ff6f8cbdfd: Preparing
+b69aea4cac7d: Waiting
+40b88e8d19a2: Waiting
+dfd9efb4ec4c: Waiting
+a8ff6f8cbdfd: Waiting
+566709b1aa6d: Layer already exists
+9df764504ba1: Layer already exists
+b41b7d979a6d: Layer already exists
+60d9cfb24d70: Layer already exists
+cffb6aedaf32: Layer already exists
+dfd9efb4ec4c: Layer already exists
+b69aea4cac7d: Layer already exists
+40b88e8d19a2: Layer already exists
+a8ff6f8cbdfd: Layer already exists
+latest: digest: sha256:f9826bf5305db33e1a6bd25325dedcc6c7f793ee399206096a8c748690793c84 size: 2203
+[Pipeline] sh
++ docker push litlewolf/result:2
+The push refers to repository [docker.io/litlewolf/result]
+648cdbeb0f12: Preparing
+693a5ec2bba5: Preparing
+a40f4c3e7f1a: Preparing
+59463e59984b: Preparing
+516982b56e0e: Preparing
+24aba09514cf: Preparing
+e1e93a4fa4fd: Preparing
+9b95ddc8a140: Preparing
+cd1cd7c2e57b: Preparing
+206f13f5e317: Preparing
+ace34d1d784c: Preparing
+9b95ddc8a140: Waiting
+ace34d1d784c: Waiting
+206f13f5e317: Waiting
+cd1cd7c2e57b: Waiting
+24aba09514cf: Waiting
+e1e93a4fa4fd: Waiting
+a40f4c3e7f1a: Pushed
+516982b56e0e: Pushed
+648cdbeb0f12: Pushed
+e1e93a4fa4fd: Layer already exists
+9b95ddc8a140: Layer already exists
+cd1cd7c2e57b: Layer already exists
+59463e59984b: Pushed
+693a5ec2bba5: Pushed
+206f13f5e317: Layer already exists
+ace34d1d784c: Layer already exists
+24aba09514cf: Pushed
+2: digest: sha256:ab2bcd3ec249fd7ff74bad506ba7f74bfc0a632ffd2b06db3bd9c4310cd1afef size: 2625
+[Pipeline] sh
++ docker push litlewolf/result:latest
+The push refers to repository [docker.io/litlewolf/result]
+648cdbeb0f12: Preparing
+693a5ec2bba5: Preparing
+a40f4c3e7f1a: Preparing
+59463e59984b: Preparing
+516982b56e0e: Preparing
+24aba09514cf: Preparing
+e1e93a4fa4fd: Preparing
+9b95ddc8a140: Preparing
+cd1cd7c2e57b: Preparing
+206f13f5e317: Preparing
+ace34d1d784c: Preparing
+24aba09514cf: Waiting
+206f13f5e317: Waiting
+ace34d1d784c: Waiting
+cd1cd7c2e57b: Waiting
+e1e93a4fa4fd: Waiting
+9b95ddc8a140: Waiting
+59463e59984b: Layer already exists
+a40f4c3e7f1a: Layer already exists
+516982b56e0e: Layer already exists
+648cdbeb0f12: Layer already exists
+693a5ec2bba5: Layer already exists
+24aba09514cf: Layer already exists
+cd1cd7c2e57b: Layer already exists
+9b95ddc8a140: Layer already exists
+e1e93a4fa4fd: Layer already exists
+206f13f5e317: Layer already exists
+ace34d1d784c: Layer already exists
+latest: digest: sha256:ab2bcd3ec249fd7ff74bad506ba7f74bfc0a632ffd2b06db3bd9c4310cd1afef size: 2625
+[Pipeline] sh
++ docker push litlewolf/worker:2
+The push refers to repository [docker.io/litlewolf/worker]
+892da60a250d: Preparing
+f6af4838d98f: Preparing
+4d29f6e29d10: Preparing
+b4ec6db9c251: Preparing
+ba941484fbe1: Preparing
+123eef91533f: Preparing
+123eef91533f: Waiting
+ba941484fbe1: Layer already exists
+b4ec6db9c251: Layer already exists
+4d29f6e29d10: Layer already exists
+123eef91533f: Layer already exists
+f6af4838d98f: Pushed
+892da60a250d: Pushed
+2: digest: sha256:893c422882d24579b7b9634e69c417af4410dd2972461bfe2ded7abf695ed33d size: 1577
+[Pipeline] sh
++ docker push litlewolf/worker:latest
+The push refers to repository [docker.io/litlewolf/worker]
+892da60a250d: Preparing
+f6af4838d98f: Preparing
+4d29f6e29d10: Preparing
+b4ec6db9c251: Preparing
+ba941484fbe1: Preparing
+123eef91533f: Preparing
+123eef91533f: Waiting
+f6af4838d98f: Layer already exists
+ba941484fbe1: Layer already exists
+4d29f6e29d10: Layer already exists
+892da60a250d: Layer already exists
+b4ec6db9c251: Layer already exists
+123eef91533f: Layer already exists
+latest: digest: sha256:893c422882d24579b7b9634e69c417af4410dd2972461bfe2ded7abf695ed33d size: 1577
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes)
+[Pipeline] echo
+🚀 Déploiement sur Kubernetes...
+[Pipeline] sh
++ kubectl apply -f k8s/
+deployment.apps/db unchanged
+service/db unchanged
+deployment.apps/redis unchanged
+service/redis unchanged
+deployment.apps/result unchanged
+service/result unchanged
+deployment.apps/vote unchanged
+service/vote unchanged
+deployment.apps/worker unchanged
+[Pipeline] sh
++ kubectl rollout status deployment/vote
+deployment "vote" successfully rolled out
+[Pipeline] sh
++ kubectl rollout status deployment/result
+deployment "result" successfully rolled out
+[Pipeline] sh
++ kubectl rollout status deployment/worker
+deployment "worker" successfully rolled out
+[Pipeline] sh
++ kubectl rollout status deployment/redis
+deployment "redis" successfully rolled out
+[Pipeline] sh
++ kubectl rollout status deployment/db
+deployment "db" successfully rolled out
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
++ docker logout
+Removing login credentials for https://index.docker.io/v1/
+[Pipeline] echo
+✅ Pipeline terminée avec succès !
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
