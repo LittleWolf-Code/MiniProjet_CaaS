@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: VOTRE_DOCKERHUB_USER/worker:latest
+          image: litlewolf/worker:latest
           resources:
             limits:
               memory: "256Mi"

@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = 'VOTRE_DOCKERHUB_USER'
+        DOCKERHUB_USER = 'litlewolf'
         VOTE_IMAGE     = "${DOCKERHUB_USER}/vote"
         RESULT_IMAGE   = "${DOCKERHUB_USER}/result"
         WORKER_IMAGE   = "${DOCKERHUB_USER}/worker"

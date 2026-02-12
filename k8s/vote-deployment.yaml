@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: vote
-          image: VOTRE_DOCKERHUB_USER/vote:latest
+          image: litlewolf/vote:latest
           ports:
             - containerPort: 80
           resources:

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: result
-          image: VOTRE_DOCKERHUB_USER/result:latest
+          image: litlewolf/result:latest
           ports:
             - containerPort: 80
           resources:
