@@ -5,16 +5,6 @@
 **Date :** 12/02/2026  
 **Étudiant :** Lopvet Lucas
 
----
-
-## 📑 Table des matières
-
-| Section | Contenu | Durée soutenance |
-|---------|---------|:-----:|
-| [0. Discussion](#0--discussion-sur-lidée-de-lapplication) | Architecture, langages, BDD | 1–2 min |
-| [1. Démonstration](#1--démonstration-end-to-end) | Pipeline Jenkins → Docker Hub → K8s → Grafana | 7–8 min |
-| [2. Justification](#2--justification--explication) | Jenkinsfile, Manifests K8s, Prometheus/Grafana | 3–4 min |
-| [Guide de réalisation](#-guide-de-réalisation-pas-à-pas) | Toutes les commandes depuis le git clone | — |
 
 ---
 
@@ -103,194 +93,6 @@ Utilisateur ──▶ vote (Flask) ──▶ Redis ──▶ Worker (.NET) ─�
                                 │  (Minikube) │     (Monitoring)
                                 └─────────────┘
 ```
-
----
-
-# 1 — Démonstration end-to-end
-
-> **Durée : 7–8 minutes.** Cette section montre que toute la chaîne fonctionne.
-
-## 1.1 — Lancer / Montrer la pipeline Jenkins
-
-Accéder à Jenkins : **http://localhost:8080**
-
-Montrer :
-1. Le **job `MiniProjet-CaaS`** dans le dashboard
-2. Cliquer sur **Build Now** pour lancer un build (ou montrer le dernier run réussi)
-3. Montrer la **Stage View** avec les 4 stages réussis (vert)
-4. Cliquer sur le build → **Console Output** → montrer le résultat `SUCCESS`
-
-> 📸 **CAPTURE 1 :** Dashboard Jenkins avec le job
->
-> ![Jenkins Dashboard](image/capture_jenkins_dashboard.png)
-
-> 📸 **CAPTURE 2 :** Stage View — 4 stages réussis
->
-> ![Jenkins Pipeline](image/capture_jenkins_pipeline.png)
-
-> 📸 **CAPTURE 3 :** Console Output — SUCCESS
->
-> ![Jenkins Console](image/capture_jenkins_console.png)
-
----
-
-## 1.2 — Montrer les images sur Docker Hub
-
-```bash
-# Ouvrir https://hub.docker.com/u/litlewolf
-# Ou vérifier en ligne de commande :
-docker images | grep litlewolf
-```
-
-Montrer pour chaque image (`litlewolf/vote`, `litlewolf/result`, `litlewolf/worker`) :
-- Le **tag** (`latest` + numéro de build)
-- La **date** de push
-- Le **digest** (SHA256)
-
-> 📸 **CAPTURE 4 :** Docker Hub — les 3 images (tag, date, digest)
->
-> ![Docker Hub](image/capture_dockerhub_images.png)
-
----
-
-## 1.3 — Montrer Kubernetes
-
-```bash
-kubectl get pods
-kubectl get svc
-kubectl get deploy
-```
-
-Résultats attendus : tous les pods en **Running**, 2 replicas pour vote, services NodePort sur 31000 et 31001.
-
-```bash
-# Accéder à l'application
-minikube service vote --url      # → http://<IP>:31000
-minikube service result --url    # → http://<IP>:31001
-```
-
-**Démonstration live :** Voter pour Cats/Dogs → voir les résultats en temps réel.
-
-> 📸 **CAPTURE 5 :** `kubectl get pods` — tous en Running
->
-> ![Kubectl Pods](image/capture_kubectl_pods.png)
-
-> 📸 **CAPTURE 6 :** `kubectl get svc` + `kubectl get deploy`
->
-> ![Kubectl Services](image/capture_kubectl_services.png)
-
-> 📸 **CAPTURE 7 :** Interface de vote Cats vs Dogs
->
-> ![Vote App](image/capture_vote_app.png)
-
-> 📸 **CAPTURE 8 :** Page des résultats en temps réel
->
-> ![Result App](image/capture_result_app.png)
-
----
-
-## 1.4 — Montrer le monitoring (Grafana)
-
-Accéder à Grafana : **http://localhost:3000** (login : `admin` / `admin`)
-
-Montrer les dashboards avec métriques CPU / mémoire des pods.
-
-> 📸 **CAPTURE 9 :** Dashboard Grafana — métriques CPU/mémoire
->
-> ![Grafana](image/capture_grafana_dashboard.png)
-
----
-
-# 2 — Justification / explication
-
-> **Durée : 3–4 minutes.**
-
-## 2.1 — Le Jenkinsfile
-
-```groovy
-pipeline {
-    agent any
-
-    environment {
-        DOCKERHUB_USER = 'litlewolf'
-        VOTE_IMAGE     = "${DOCKERHUB_USER}/vote"
-        RESULT_IMAGE   = "${DOCKERHUB_USER}/result"
-        WORKER_IMAGE   = "${DOCKERHUB_USER}/worker"
-        BUILD_TAG      = "${env.BUILD_NUMBER}"
-    }
-
-    stages {
-        stage('Checkout')            { ... } // 1. Récupère le code depuis GitHub
-        stage('Build Docker Images') { ... } // 2. Build les 3 images Docker
-        stage('Push to Docker Hub')  { ... } // 3. Push avec credentials Jenkins
-        stage('Deploy to Kubernetes'){ ... } // 4. kubectl apply -f k8s/
-    }
-}
-```
-
-| Élément | Explication |
-|---------|------------|
-| **`agent any`** | S'exécute sur n'importe quel agent Jenkins |
-| **`BUILD_TAG`** | Tag unique par build (ex: `litlewolf/vote:3`) + `latest` |
-| **`withCredentials`** | Credentials `dockerhub-credentials` stockés dans Jenkins (pas en clair) |
-| **`kubectl apply -f k8s/`** | Applique tous les manifests K8s d'un coup |
-| **`kubectl rollout status`** | Attend la fin du déploiement avant de passer au suivant |
-| **`docker logout`** | Toujours exécuté (bloc `post > always`) pour la sécurité |
-
----
-
-## 2.2 — Les manifests Kubernetes
-
-### Déploiements
-
-| Deployment | Image | Replicas | CPU | Mémoire | Pourquoi |
-|------------|-------|:--------:|:---:|:-------:|----------|
-| **vote** | `litlewolf/vote:latest` | **2** | 250m | 128Mi | 2 replicas pour la haute disponibilité (frontend) |
-| **result** | `litlewolf/result:latest` | 1 | 250m | 128Mi | 1 replica suffit (lecture seule) |
-| **worker** | `litlewolf/worker:latest` | 1 | 500m | 256Mi | Plus de ressources (traitement Redis → PG) |
-| **redis** | `redis:alpine` | 1 | 250m | 128Mi | Image officielle Alpine (légère) |
-| **db** | `postgres:15-alpine` | 1 | 500m | 256Mi | `emptyDir` pour le volume (démo) |
-
-### Services
-
-| Service | Type | Port externe | Pourquoi |
-|---------|------|:------------:|----------|
-| **vote** | **NodePort** | 31000 | Accessible depuis l'extérieur pour voter |
-| **result** | **NodePort** | 31001 | Accessible pour voir les résultats |
-| **redis** | ClusterIP | — | Communication interne uniquement |
-| **db** | ClusterIP | — | Communication interne uniquement |
-
-> **NodePort** car Minikube ne supporte pas `LoadBalancer` nativement. Pas d'Ingress car NodePort suffit pour une démo locale.
-
----
-
-## 2.3 — Prometheus / Grafana
-
-### Installation via Helm (kube-prometheus-stack)
-
-Le chart Helm `kube-prometheus-stack` installe **tout automatiquement** :
-
-| Composant | Rôle |
-|-----------|------|
-| **Prometheus** | Scrape automatiquement tous les pods/nodes K8s |
-| **Grafana** | Préconfigurée avec Prometheus comme datasource |
-| **kube-state-metrics** | Métriques des objets K8s (pods, deploys) |
-| **node-exporter** | Métriques système des nœuds (CPU, RAM) |
-
-### Comment le scrape fonctionne
-
-```
-Prometheus ◀── scrape ── kube-state-metrics  (métriques K8s)
-           ◀── scrape ── node-exporter       (métriques système)
-           ◀── scrape ── kubelet/cAdvisor    (métriques conteneurs)
-     │
-     ▼ datasource auto-configurée
-  Grafana → Dashboards pré-installés + import ID 15661/6417/315
-```
-
-- Les `ServiceMonitor` CRDs configurent automatiquement les cibles de scrape
-- Grafana est préconfigurée — aucune configuration manuelle nécessaire
-- Dashboards importés par ID pour des vues prêtes à l'emploi
 
 ---
 
@@ -479,6 +281,10 @@ docker network create minikube 2>/dev/null || true
 cd ~/MiniProjet_CaaS/jenkins
 docker compose up -d
 ```
+probleme jenkins sur port 8080 : 
+devops@DevOps-VM:~/Desktop/caas/MiniProjet_CaaS/jenkins$ sudo systemctl stop jenkins
+devops@DevOps-VM:~/Desktop/caas/MiniProjet_CaaS/jenkins$ sudo systemctl disable jenkins
+docker compsoe up -d
 
 Vérifier que les conteneurs tournent :
 
@@ -532,8 +338,9 @@ Ouvrir Jenkins dans le navigateur : **http://localhost:8080**
 ## Étape 8 — Copier la config kubectl dans Jenkins
 
 ```bash
+kubectl config view --flatten > /tmp/kubeconfig-flat
 # Copier la config kubeconfig dans le conteneur Jenkins
-docker cp ~/.kube/config jenkins-blueocean:/home/jenkins/.kube/config
+docker cp /tmp/kubeconfig-flat jenkins-blueocean:/home/jenkins/.kube/config
 
 # Corriger les permissions
 docker exec -u root jenkins-blueocean chown -R jenkins:jenkins /home/jenkins/.kube
@@ -695,90 +502,3 @@ minikube ip    # Récupérer l'IP de Minikube
 ```
 
 ---
-
-## 🔧 Dépannage
-
-### Pods en CrashLoopBackOff
-
-```bash
-kubectl logs <nom-du-pod>
-kubectl describe pod <nom-du-pod>
-```
-
-### Minikube ne démarre pas
-
-```bash
-minikube delete
-minikube start --driver=docker --cpus=4 --memory=4096
-```
-
-### Docker permission denied
-
-```bash
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-### Jenkins ne peut pas accéder à Docker (DinD)
-
-```bash
-# Vérifier que le conteneur DinD tourne
-docker ps | grep jenkins-docker
-
-# Si non, relancer :
-cd ~/MiniProjet_CaaS/jenkins
-docker compose down
-docker compose up -d
-```
-
-### Jenkins ne peut pas accéder à Kubernetes
-
-```bash
-# Re-copier la config kubectl
-docker cp ~/.kube/config jenkins-blueocean:/home/jenkins/.kube/config
-docker exec -u root jenkins-blueocean chown -R jenkins:jenkins /home/jenkins/.kube
-
-# Adapter l'IP si nécessaire
-MINIKUBE_IP=$(minikube ip)
-docker exec jenkins-blueocean sed -i "s|https://127.0.0.1:[0-9]*|https://$MINIKUBE_IP:8443|g" /home/jenkins/.kube/config
-docker exec jenkins-blueocean sed -i "s|certificate-authority: .*|insecure-skip-tls-verify: true|g" /home/jenkins/.kube/config
-```
-
-### Réinitialiser tout le déploiement
-
-```bash
-kubectl delete -f k8s/
-kubectl apply -f k8s/
-```
-
-### Relancer le monitoring
-
-```bash
-helm uninstall monitoring -n monitoring
-helm install monitoring prometheus-community/kube-prometheus-stack \
-  --namespace monitoring \
-  --create-namespace \
-  --set grafana.adminPassword=admin
-```
-
----
-
-## 🎯 Conclusion
-
-Ce projet démontre la mise en place d'une **chaîne DevOps complète** :
-
-| Étape | Réalisation |
-|-------|------------|
-| **Code source** | ✅ Repository GitHub avec 3 microservices structurés |
-| **Dockerisation** | ✅ 3 images Docker construites et poussées sur Docker Hub |
-| **CI/CD** | ✅ Pipeline Jenkins (Checkout → Build → Push → Deploy) |
-| **Orchestration** | ✅ Kubernetes avec 5 services sur Minikube |
-| **Monitoring** | ✅ Prometheus + Grafana via Helm |
-
-**Technologies :** Git, GitHub, Docker, Docker Hub, Jenkins, Kubernetes (Minikube), Helm, Prometheus, Grafana
-
----
-
-> **Auteur :** Lopvet Lucas  
-> **Module :** Cloud as a Service (CaaS)  
-> **Date :** 12/02/2026
