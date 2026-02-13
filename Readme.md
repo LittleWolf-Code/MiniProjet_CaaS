@@ -147,7 +147,7 @@ docker ps
 cd ~
 git clone https://github.com/LittleWolf-Code/MiniProjet_CaaS.git
 cd MiniProjet_CaaS
-git checkout projet-final
+
 ```
 
 Vérifier la structure :
@@ -278,12 +278,11 @@ docker network create minikube 2>/dev/null || true
 ```bash
 # Lancer Jenkins + Docker-in-Docker
 cd ~/MiniProjet_CaaS/jenkins
-docker compose up -d
-```
-probleme jenkins sur port 8080 : 
-devops@DevOps-VM:~/Desktop/caas/MiniProjet_CaaS/jenkins$ sudo systemctl stop jenkins
-devops@DevOps-VM:~/Desktop/caas/MiniProjet_CaaS/jenkins$ sudo systemctl disable jenkins
+sudo systemctl stop jenkins
+sudo systemctl disable jenkins
 docker compsoe up -d
+
+```
 
 Vérifier que les conteneurs tournent :
 
@@ -377,7 +376,7 @@ docker exec jenkins-blueocean kubectl get nodes
    - **Pipeline** → **Definition** : `Pipeline script from SCM`
    - **SCM** : Git
    - **Repository URL** : `https://github.com/LittleWolf-Code/MiniProjet_CaaS.git`
-   - **Branch** : `*/projet-final`
+   - **Branch** : `*/main`
    - **Script Path** : `Jenkinsfile`
 5. Cliquer **Save**
 
