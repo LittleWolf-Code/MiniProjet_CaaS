@@ -280,7 +280,7 @@ docker network create minikube 2>/dev/null || true
 cd ~/MiniProjet_CaaS/jenkins
 sudo systemctl stop jenkins
 sudo systemctl disable jenkins
-docker compsoe up -d
+docker compose up -d
 
 ```
 
